@@ -1,0 +1,19 @@
+{
+  "name": "final-bachelor-project",
+  "version": "1.0.0",
+  "description": "Discord bot based on NodeJS which uses OpenAI (ChatGPT) API for browsing web and randomly picking a word of chosen language with certain \"difficulty\", which is going to be determined by word length or complexity of an explanation, and explaining it.",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bot.js"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.9.0",
+    "dotenv": "^16.0.3",
+    "openai": "^3.2.1"
+  }
+}
