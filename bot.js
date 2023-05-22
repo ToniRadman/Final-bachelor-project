@@ -12,6 +12,10 @@ const client = new Client({
   ],
 });
 
+client.on("ready", () =>{
+  console.log("The AI bot is online");
+});
+
 const openai = new OpenAIApi(new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   })
