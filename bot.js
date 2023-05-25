@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
 import { Configuration, OpenAIApi } from "openai";
+import { schedule } from "node-cron";
 
 dotenv.config();
 
@@ -20,6 +21,12 @@ const openai = new OpenAIApi(new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   })
 );
+
+schedule('*/1 * * * *', () => {
+  console.log('running a task every minute');
+  const channel = client.channels.cache.get('1093205013272211458');
+  channel.send('Hi! I am a discord bot which provides a new word every day in any language you choose');
+});
 
 client.on("messageCreate", async function (message) {
     if (message.author.bot) return;
