@@ -35,7 +35,7 @@ schedule('*/5 * * * *', () => {
   //bot's API key in .env file is being read through "process" property for connecting and logging in
   //it prevents bot going permanently offline since it can logout itself in case of inactivity which may
   //be potentially caused by the last setTimeout function since it disables bot's functionality
-  //temporarily(lines 80-83)
+  //temporarily(lines 78-82)
 
   setTimeout(() => {
     //the function delays execution of the code bellow so the login function above can finish its
@@ -45,7 +45,7 @@ schedule('*/5 * * * *', () => {
     //schedule function check-up
 
     const channel = client.channels.cache.find(channel => channel.name === 'general');
-    channel.send('Hi! I am an AI discord bot which explains a new word every day in any language you choose:');
+    channel.send('Hi! I\'m an AI discord bot which explains a new word every day in any language you choose:');
     //bot sends initial message to filtered channel as in-app schedule function check up
     //also it is a sign that bot can be used
     
@@ -68,7 +68,7 @@ schedule('*/5 * * * *', () => {
         //on the context given in "content" property, it creates a response which is being sent back
   
       } catch (err) {
-        return message.reply('As an AI robot, I errored out.');
+        return message.reply('As an AI bot, I errored out.');
       }
       //the bot throws an error message in lack of proper response to the request or can't process some
       //of them in a short period if there are multiple ones
@@ -76,7 +76,7 @@ schedule('*/5 * * * *', () => {
     });
 
     setTimeout(() => {
-      channel.send('I am sorry for being unable to talk anymore, but see you tomorrow. Have a nice day!');
+      channel.send('I\'m sorry that we can\'t talk anymore, but see you tomorrow. Have a nice day!');
       client.removeAllListeners('messageCreate');
       console.log('Stopped receiving messages.');
     }, 60000);
