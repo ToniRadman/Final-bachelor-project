@@ -28,9 +28,9 @@ schedule('*/2 * * * *', () => {
 
   client.login(process.env.DISCORD_BOT_TOKEN);
   //bot's API key in .env file is being read through "process" property for connecting and logging in
-  //it prevents bot going permanently offline since it can logout itself in case of inactivity which may
-  //be potentially caused by the setTimeout function since it disables bot's functionality
-  //temporarily(lines 93-97)
+  //it prevents bot from going permanently offline since it can logout itself in case of inactivity which
+  //may be potentially caused by the setTimeout function since it disables bot's functionality
+  //temporarily(lines 94-98)
 
   client.on('ready', () =>{
     console.log('The AI bot is online');
@@ -44,7 +44,7 @@ schedule('*/2 * * * *', () => {
     console.log('running a task every day');
     //schedule function check-up
 
-    const channel = client.channels.cache.find(channel => channel.name === 'general');
+    const channel = client.channels.cache.get('1093205013272211458');
     await channel.send('Hi! I\'m an AI discord bot which explains a new word every day in any language you choose:');
     //bot sends initial message to filtered channel as in-app schedule function check up
     //also it is a sign that bot can be used
@@ -59,7 +59,7 @@ schedule('*/2 * * * *', () => {
           messages: [
               {role: 'user', content: message.content},
               {role: 'system', content: 
-              `Generate a new random word in the chosen language and provide its description in the following format:
+              `Generate a new random word in ${message.content} language and provide its description in the following format:
 
               Word: [Word]
               Language: ${message.content}
@@ -70,10 +70,9 @@ schedule('*/2 * * * *', () => {
               Additional Information: [Any relevant additional information or context]
               
               Translation into ${message.content}:
-              [Translation of the entire description into the ${message.content}, except for the English language]
+              [Translation of the entire description into the ${message.content}]
               
-              Please ensure that the description adheres to this format, including the word, language, meaning, and pronunciation. 
-              Also you must accept only language names as valid inputs. Thank you!`
+              Please ensure that the description adheres to this format, including the word, language, meaning, and pronunciation. Thank you!`
               }
           ],
         });
@@ -84,6 +83,7 @@ schedule('*/2 * * * *', () => {
         //on the context given in "content" property, it creates a response which is being sent back
   
       } catch (err) {
+        console.log(err);
         return message.reply('As an AI bot, I encountered an error.');
       }
       //the bot throws an error message in lack of proper response to the request or can't process some
