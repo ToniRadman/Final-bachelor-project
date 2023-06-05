@@ -30,7 +30,7 @@ schedule('*/2 * * * *', () => {
   //bot's API key in .env file is being read through "process" property for connecting and logging in
   //it prevents bot from going permanently offline since it can logout itself in case of inactivity which
   //may be potentially caused by the setTimeout function since it disables bot's functionality
-  //temporarily(lines 94-98)
+  //temporarily(lines 108-112)
 
   client.on('ready', () =>{
     console.log('The AI bot is online');
@@ -54,26 +54,40 @@ schedule('*/2 * * * *', () => {
       //if statement checks if any bot sent a message so it can be ignored 
     
       try {
+        const regexPattern = /(\w+)\s+(\d+)/;
+        const inputMessage = message.content.trim();
+        const match = inputMessage.match(regexPattern);
+        if (!match) {
+           return message.reply('Invalid input format. Please provide the language and word length.');
+        }
+        //if an input doesn't match the regular expression,
+        //it is gonna be rejected with the following message
+
+        const language = match[1];
+        const wordLength = parseInt(match[2]);
+        //language and word length are being extracted from valid input into separated variables
+
+        const prompt = `Generate a new random ${wordLength}-letters word in ${language} language and provide its description in the following format:
+
+        Word: [Word]
+        Language: ${language}
+        
+        Meaning: [Description of the meaning]
+        Pronunciation: [Pronunciation guide or phonetic transcription]
+        
+        Additional Information: [Any relevant additional information or context]
+        
+        Translation into ${language}:
+        [Translation of the entire description into the ${language}]
+        
+        Please ensure that the description adheres to this format, including the word, language, meaning, and pronunciation. Thank you!`
+        //expected output in strict format contained into prompt sent as a requestin the function bellow
+
         const response = await openai.createChatCompletion({
           model: 'gpt-3.5-turbo',
           messages: [
               {role: 'user', content: message.content},
-              {role: 'system', content: 
-              `Generate a new random word in ${message.content} language and provide its description in the following format:
-
-              Word: [Word]
-              Language: ${message.content}
-              
-              Meaning: [Description of the meaning]
-              Pronunciation: [Pronunciation guide or phonetic transcription]
-              
-              Additional Information: [Any relevant additional information or context]
-              
-              Translation into ${message.content}:
-              [Translation of the entire description into the ${message.content}]
-              
-              Please ensure that the description adheres to this format, including the word, language, meaning, and pronunciation. Thank you!`
-              }
+              {role: 'system', content: prompt}
           ],
         });
   
