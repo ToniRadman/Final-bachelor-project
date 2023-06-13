@@ -24,23 +24,38 @@ const openai = new OpenAIApi(new Configuration({
 //OpenAI's API configuration
 
 client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
-  console.log("logged in");
   //bot's API key in .env file is being read through "process" property for connecting and logging in
+  console.log('logged in');
 
 }).finally(()=>{
-  console.log('running a task every day');
-  //schedule function check-up
+  console.log('Bot initiates its operativity');
 
-  async function initialMessage(){
-    const channel = client.channels.cache.get('1093205013272211458');
-    await channel.send('Hi! I\'m an AI discord bot which explains a new word every day in any language you choose:');
-    //bot sends initial message to filtered channel as in-app schedule function check up
-    //also it is a sign that bot can be used
+  function getChannel() {
+    return new Promise((resolve, reject) => {
+      const channel = client.channels.cache.get('1093205013272211458');
+      if (channel) {
+        resolve(channel);
+      } else {
+        reject(new Error('Channel not found.'));
+      }
+    });
   }
-  initialMessage();
-  
+  //the function extracts a channel ID used for interacting with bot
+
+  async function InitialMessage(){
+    const channel = await getChannel();
+    setImmediate(async () => {
+      channel.send('Hi! I\'m an AI discord bot which explains a new word every day in any language you choose, but please use the following format: [language] [word-length]');
+      console.log('Initial message sent.');
+    });
+  }
+  InitialMessage();
+  //bot sends initial message to filtered channel as in-app function check up
+  //also it is a sign that bot can be used
+
+  let listenerActive = true;
   client.on('messageCreate', async function (message) {
-    if (message.author.bot) return;
+    if (!listenerActive || message.author.bot) return;
     //if statement checks if any bot sent a message so it can be ignored 
   
     try {
@@ -72,7 +87,6 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
       [Translation of the entire description into the ${language}]
       
       Please ensure that the description adheres to this format, including the word, language, meaning, and pronunciation. Thank you!`
-      //expected output in strict format contained into prompt sent as a requestin the function bellow
 
       if(language == 'English'){
         var prompt = `Generate a new random ${wordLength}-letters word in ${language} language and provide its description in the following format:
@@ -89,7 +103,7 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
       } else{
         prompt = originalPrompt;
       }
-      //this if-else statements cuts off a part of prompt to prevent redudant information in English
+      //the if-else statement cuts off a part of prompt to prevent redudant information in English
       
       const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
@@ -106,10 +120,19 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
       
     } catch (err) {
       console.log(err);
-      return message.reply('As an AI bot, I encountered an error.');
+      if(err.response.status === 429){
+        listenerActive = false;
+        const cooldownMsg = message.reply('Don\'t hurry, let me cool down for a minute!');
+        setTimeout(async () => {
+          await cooldownMsg;
+          InitialMessage();
+          listenerActive = true;
+        }, 60000);
+      } else{
+        return message.reply('As an AI bot, I encountered an error.');
+      }
     }
-    //the bot throws an error message in lack of proper response to the request or can't process some
-    //of them in a short period if there are multiple ones
-
+    //the bot throws an error message in lack of proper response to the request or can't process more
+    //than declared in model's rate/token limit
   });
 });
