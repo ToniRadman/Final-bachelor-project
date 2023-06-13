@@ -36,7 +36,7 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
       if (channel) {
         resolve(channel);
       } else {
-        reject(new Error('Channel not found.'));
+        reject(getChannel());
       }
     });
   }
