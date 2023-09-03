@@ -210,7 +210,7 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
       
           const content = response.data.choices[0].message;
           
-          // You can customize the logic for where you want to send the prompt
+          // You can customize the logic for location where you want to send the prompt
           // For example, sending it to a specific channel
           const channel = client.channels.cache.get("1093205013272211458");
           if (channel) {
@@ -226,7 +226,7 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
         const currentTime = Date.now();
         const inactiveDuration = currentTime - lastActivityTime;
 
-        // Check if there has been no activity within the last 15 minutes
+        // Check if there has been no activity within the last few minutes(customisable)
         if (inactiveDuration >= 2 * 60 * 1000) {
           sendPrompt();
           console.log('Scheduled prompt sending executed due to inactivity');
