@@ -95,8 +95,6 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
     //check-up with database if certain user had already interacted in that day with a bot
     //blocks further interaction for that user (anti-spam measure, especially for large servers)
 
-    
-  
     try {
       
       const regexPattern = /(\w+)\s+(\d+)/;
